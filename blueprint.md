@@ -25,5 +25,14 @@ A simple web application that allows users to generate random toto numbers.
     *   Subtle noise texture on the background for a tactile feel.
     *   Modern typography and gradient text for the main heading.
     *   Enhanced interactive button with hover/active states and a subtle glow.
+    *   **Singapore TOTO Ticket Redesign**:
+        *   Authentic receipt-style layout with jagged/perforated edges.
+        *   Singapore Pools and TOTO branding (red/white).
+        *   Monospace/typewriter font for numbers to mimic thermal printing.
+        *   Ticket footer with timestamp and barcode.
+    *   **Firecracker Burst Animation**:
+        *   Festive particle burst (red, gold, white) triggers upon drawing new numbers.
+        *   Particles fall with gravity and fade out, simulating a firecracker explosion.
+
 
 

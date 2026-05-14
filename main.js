@@ -4,118 +4,246 @@ class LottoGenerator extends HTMLElement {
     const shadow = this.attachShadow({ mode: 'open' });
 
     const wrapper = document.createElement('div');
-    wrapper.setAttribute('class', 'wrapper');
+    wrapper.setAttribute('class', 'wrapper ticket');
+
+    const header = document.createElement('div');
+    header.setAttribute('class', 'ticket-header');
+    header.innerHTML = `
+      <div class="pools-logo">SINGAPORE POOLS</div>
+      <div class="toto-title">TOTO</div>
+      <div class="ticket-info">ORDINARY ENTRY</div>
+    `;
 
     const button = document.createElement('button');
-    button.textContent = '🎲 Generate New Numbers';
-    button.addEventListener('click', () => this.generateNumbers());
+    button.textContent = '🎲 DRAW NUMBERS';
+    button.addEventListener('click', () => {
+      this.generateNumbers();
+      this.fireBurst();
+    });
 
     const numbersDiv = document.createElement('div');
     numbersDiv.setAttribute('class', 'numbers');
+
+    const footer = document.createElement('div');
+    footer.setAttribute('class', 'ticket-footer');
+    footer.innerHTML = `
+      <div>${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}</div>
+      <div class="barcode">|| ||| || |||| | ||| |||</div>
+    `;
 
     const style = document.createElement('style');
     style.textContent = `
       :host {
         width: 100%;
-        max-width: 600px;
+        max-width: 450px;
         margin: 20px auto;
+        display: block;
       }
-      .wrapper {
+      .ticket {
+        background-color: #fff;
+        color: #000;
+        padding: 40px 30px;
+        position: relative;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.15);
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 30px;
-        padding: 40px;
-        border: 1px solid var(--border-color);
-        border-radius: 24px;
-        background-color: var(--surface-color);
-        box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1), 0 20px 60px -20px rgba(0,0,0,0.1);
-        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        overflow-x: auto;
+        gap: 20px;
+        font-family: 'Courier New', Courier, monospace;
+        border-radius: 4px;
       }
-      [data-theme="dark"] .wrapper {
-        box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5), 0 20px 60px -20px rgba(0,0,0,0.3);
+      /* Jagged edge effect */
+      .ticket::before, .ticket::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 10px;
+        background-size: 20px 20px;
+        background-repeat: repeat-x;
       }
+      .ticket::before {
+        top: -10px;
+        background-image: radial-gradient(circle at 10px 15px, transparent 12px, #fff 13px);
+      }
+      .ticket::after {
+        bottom: -10px;
+        background-image: radial-gradient(circle at 10px -5px, transparent 12px, #fff 13px);
+      }
+
+      [data-theme="dark"] .ticket {
+        background-color: #f8f8f8; /* Keep ticket light for authentic look even in dark mode */
+      }
+
+      .ticket-header {
+        text-align: center;
+        border-bottom: 2px dashed #ccc;
+        width: 100%;
+        padding-bottom: 15px;
+      }
+      .pools-logo {
+        color: #e31b23;
+        font-weight: 900;
+        font-size: 1.2rem;
+        letter-spacing: 1px;
+      }
+      .toto-title {
+        font-size: 2.5rem;
+        font-weight: 900;
+        margin: 5px 0;
+        color: #000;
+      }
+      .ticket-info {
+        font-size: 0.9rem;
+        color: #666;
+      }
+
       .numbers {
         display: flex;
         flex-wrap: nowrap;
         justify-content: center;
         gap: 12px;
-        min-height: 60px;
+        margin: 20px 0;
         width: 100%;
       }
       .number {
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 60px;
-        height: 60px;
-        flex-shrink: 0;
-        border-radius: 50%;
-        background: linear-gradient(135deg, var(--number-bg), var(--bg-color));
-        border: 2px solid var(--border-color);
-        color: var(--text-color);
-        font-size: 24px;
-        font-weight: 800;
-        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        width: 50px;
+        height: 50px;
+        border: 2px solid #000;
+        font-size: 20px;
+        font-weight: bold;
+        background: transparent;
         opacity: 0;
-        transform: scale(0.5) translateY(20px);
-        animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        transform: translateY(10px);
+        animation: printIn 0.3s forwards;
       }
-      @media (max-width: 480px) {
-        .number {
-          width: 45px;
-          height: 45px;
-          font-size: 18px;
-        }
-        .numbers {
-          gap: 8px;
-        }
-        .wrapper {
-          padding: 20px;
-        }
+      @keyframes printIn {
+        to { opacity: 1; transform: translateY(0); }
       }
-      @keyframes popIn {
-        to {
-          opacity: 1;
-          transform: scale(1) translateY(0);
-        }
-      }
+
       button {
-        padding: 16px 32px;
-        border: none;
-        border-radius: 16px;
-        background-color: var(--accent-color);
+        padding: 12px 24px;
+        background-color: #e31b23;
         color: white;
-        font-size: 18px;
-        font-weight: 600;
+        border: none;
+        border-radius: 8px;
+        font-family: sans-serif;
+        font-weight: bold;
         cursor: pointer;
-        box-shadow: 0 4px 15px var(--accent-color);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        display: flex;
-        align-items: center;
-        gap: 8px;
+        transition: transform 0.2s, background-color 0.2s;
+        box-shadow: 0 4px 0 #9e1318;
       }
       button:hover {
-        background-color: var(--accent-hover);
+        background-color: #c4181f;
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px var(--accent-color);
       }
       button:active {
-        transform: translateY(0);
+        transform: translateY(2px);
+        box-shadow: none;
+      }
+
+      .ticket-footer {
+        width: 100%;
+        text-align: center;
+        border-top: 2px dashed #ccc;
+        padding-top: 15px;
+        font-size: 0.8rem;
+        color: #666;
+      }
+      .barcode {
+        font-size: 1.5rem;
+        letter-spacing: -2px;
+        margin-top: 10px;
+        color: #000;
+      }
+
+      @media (max-width: 480px) {
+        .number {
+          width: 40px;
+          height: 40px;
+          font-size: 16px;
+        }
+        .numbers { gap: 8px; }
       }
     `;
 
     shadow.appendChild(style);
     shadow.appendChild(wrapper);
+    wrapper.appendChild(header);
     wrapper.appendChild(numbersDiv);
     wrapper.appendChild(button);
+    wrapper.appendChild(footer);
 
     this.numbersDiv = numbersDiv;
   }
 
   connectedCallback() {
     this.generateNumbers();
+  }
+
+  fireBurst() {
+    const burstContainer = document.createElement('div');
+    burstContainer.style.position = 'fixed';
+    burstContainer.style.top = '0';
+    burstContainer.style.left = '0';
+    burstContainer.style.width = '100vw';
+    burstContainer.style.height = '100vh';
+    burstContainer.style.pointerEvents = 'none';
+    burstContainer.style.zIndex = '9999';
+    document.body.appendChild(burstContainer);
+
+    const colors = ['#e31b23', '#ffd700', '#ff4500', '#ffffff'];
+    for (let i = 0; i < 100; i++) {
+      const particle = document.createElement('div');
+      const size = Math.random() * 8 + 4;
+      particle.style.position = 'absolute';
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
+      particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      particle.style.borderRadius = '2px';
+      
+      const startX = window.innerWidth / 2;
+      const startY = window.innerHeight / 2;
+      
+      particle.style.left = `${startX}px`;
+      particle.style.top = `${startY}px`;
+      
+      const angle = Math.random() * Math.PI * 2;
+      const velocity = Math.random() * 15 + 5;
+      const dx = Math.cos(angle) * velocity;
+      const dy = Math.sin(angle) * velocity;
+      
+      burstContainer.appendChild(particle);
+      
+      let x = startX;
+      let y = startY;
+      let opacity = 1;
+      let gravity = 0.2;
+      let vY = dy;
+
+      const animate = () => {
+        x += dx;
+        vY += gravity;
+        y += vY;
+        opacity -= 0.01;
+        
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
+        particle.style.opacity = opacity;
+        
+        if (opacity > 0) {
+          requestAnimationFrame(animate);
+        } else {
+          particle.remove();
+        }
+      };
+      requestAnimationFrame(animate);
+    }
+
+    setTimeout(() => burstContainer.remove(), 2500);
   }
 
   generateNumbers() {
