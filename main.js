@@ -17,7 +17,7 @@ class LottoGenerator extends HTMLElement {
     style.textContent = `
       :host {
         width: 100%;
-        max-width: 500px;
+        max-width: 600px;
         margin: 20px auto;
       }
       .wrapper {
@@ -31,16 +31,18 @@ class LottoGenerator extends HTMLElement {
         background-color: var(--surface-color);
         box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1), 0 20px 60px -20px rgba(0,0,0,0.1);
         transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow-x: auto;
       }
       [data-theme="dark"] .wrapper {
         box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5), 0 20px 60px -20px rgba(0,0,0,0.3);
       }
       .numbers {
         display: flex;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         justify-content: center;
-        gap: 15px;
+        gap: 12px;
         min-height: 60px;
+        width: 100%;
       }
       .number {
         display: flex;
@@ -48,6 +50,7 @@ class LottoGenerator extends HTMLElement {
         align-items: center;
         width: 60px;
         height: 60px;
+        flex-shrink: 0;
         border-radius: 50%;
         background: linear-gradient(135deg, var(--number-bg), var(--bg-color));
         border: 2px solid var(--border-color);
@@ -58,6 +61,19 @@ class LottoGenerator extends HTMLElement {
         opacity: 0;
         transform: scale(0.5) translateY(20px);
         animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      }
+      @media (max-width: 480px) {
+        .number {
+          width: 45px;
+          height: 45px;
+          font-size: 18px;
+        }
+        .numbers {
+          gap: 8px;
+        }
+        .wrapper {
+          padding: 20px;
+        }
       }
       @keyframes popIn {
         to {
